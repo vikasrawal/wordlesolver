@@ -1,18 +1,23 @@
 library(data.table)
 
-command<-"find /usr/share/wordnet/dict/ -type f -exec cat {} + | sed 's/ /\\n/g\' | grep -oE '^[[:lower:]]+' |grep -E '^[[:alpha:]]{5}$'  | sort | uniq "
-system(command,intern=TRUE)->t
-data.table(V0=t)->t
-substr(t$V0,1,1)->t$V1
-substr(t$V0,2,2)->t$V2
-substr(t$V0,3,3)->t$V3
-substr(t$V0,4,4)->t$V4
-substr(t$V0,5,5)->t$V5
-melt(t,id="V0")->t
-fread("freqalpha.csv")->t1
-merge(t,t1,by.x="value",by.y="V1")->t
-t[,.(sum(V2)),.(V0,value)][,.(sum(V1),length(V1)),V0]->wordlist5
+## Code to read wordnet dictionary and create a list of 5 letter words.
+## command<-"find /usr/share/wordnet/dict/ -type f -exec cat {} + | sed 's/ /\\n/g\' | grep -oE '^[[:lower:]]+' |grep -E '^[[:alpha:]]{5}$'  | sort | uniq > wordlist5.csv"
+## system(command)
+## fread("wordlist5.csv",col.names=c("V0"))->t
+## substr(t$V0,1,1)->t$V1
+## substr(t$V0,2,2)->t$V2
+## substr(t$V0,3,3)->t$V3
+## substr(t$V0,4,4)->t$V4
+## substr(t$V0,5,5)->t$V5
+## melt(t,id="V0")->t
+## command2<-"cat wordlist5.csv | sed 's/\\(.\\)/\\1\\n/g' | sort | uniq -c | grep -E '[a-z]$' | awk '{ print $2 \" \" $1}' > freqalpha.csv"
+## system(command2)
+## fread("freqalpha.csv")->t1
+## merge(t,t1,by.x="value",by.y="V1")->t
+## t[,.(sum(V2)),.(V0,value)][,.(sum(V1),length(V1)),V0]->wordlist5
+## write.csv(wordlist5,file="wordlist5.csv")
 
+fread("wordlist5.csv")->wordlist5
 print("Start with 'arose'")
 round=1
 correct="n"
